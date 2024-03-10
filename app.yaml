@@ -7,7 +7,7 @@ manual_scaling:
 
 resources:
   cpu: 1
-  memory_gb: 1
+  memory_gb: 4
   disk_size_gb: 10  # Adjust the disk size as needed
 
 runtime_config:  # Specify the python version
