@@ -1,0 +1,17 @@
+runtime: python
+env: flex
+entrypoint: gunicorn -k eventlet -w 1 app:app
+
+manual_scaling:
+  instances: 1  # You can adjust the number of instances
+
+resources:
+  cpu: 1
+  memory_gb: 1
+  disk_size_gb: 10  # Adjust the disk size as needed
+
+runtime_config:  # Specify the python version
+  python_version: 3
+
+env_variables:
+  # Environment variables can be placed here, if needed.

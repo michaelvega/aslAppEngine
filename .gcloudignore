@@ -1,0 +1,55 @@
+# Ignore the virtualenv directory
+venv/
+env/
+.venv/
+
+# Ignore instance configuration
+instance/
+
+# Ignore .env files that contain secrets
+.env
+.env.*
+
+# Ignore version control directories
+.git/
+.gitignore
+
+# Ignore compiled python files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.py[cod]
+
+# Ignore log, cache, and local files
+*.log
+*.sqlite
+*.db
+.cache/
+.local/
+
+# Ignore specific directories which are not needed
+node_modules/
+bower_components/
+dist/
+build/
+
+# Ignore all markdown, text, and documentation files
+*.md
+*.txt
+*.docx
+README
+LICENSE
+
+# Ignore test directories and files
+tests/
+*.test.py
+test_*.py
+
+# Optional: Ignore all files except those explicitly specified
+# Uncomment the line below if you want to use this mode.
+# Important: This may cause unexpected behavior if not handled properly!
+# !app.yaml
+# !main.py
+# !requirements.txt
+# !<other necessary files and directories>
