@@ -1,6 +1,6 @@
 runtime: python
 env: flex
-entrypoint: gunicorn -k eventlet -w 1 app:app
+entrypoint: gunicorn -b :$PORT app:app
 
 manual_scaling:
   instances: 1  # You can adjust the number of instances
