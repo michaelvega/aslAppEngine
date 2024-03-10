@@ -45,11 +45,3 @@ LICENSE
 tests/
 *.test.py
 test_*.py
-
-# Optional: Ignore all files except those explicitly specified
-# Uncomment the line below if you want to use this mode.
-# Important: This may cause unexpected behavior if not handled properly!
-# !app.yaml
-# !main.py
-# !requirements.txt
-# !<other necessary files and directories>

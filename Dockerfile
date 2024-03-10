@@ -4,12 +4,14 @@ ENV VIRTUAL_ENV /env
 ENV PATH /env/bin:$PATH
 
 # Installing all python modules specified
-ADD requirements.txt requirements.txt
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
 
 #Copy App Contents
 ADD . /app
 WORKDIR /app
+
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 app:app
 
 #Start Flask Server
 CMD ["python", "app.py"]
