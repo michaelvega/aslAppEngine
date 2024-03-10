@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hand Gesture Recognition</title>
+</head>
+<body>
+    <h2>Hand Gesture Recognition</h2>
+    <video id="video" width="640" height="480" autoplay></video>
+    <img id="outputImage" src="" alt="Processed Image" style="max-width: 640px; height: auto;"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+        var video = document.getElementById('video');
+
+        // Get access to the camera
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+                video.srcObject = stream;
+                video.play();
+            });
+        }
+
+        // Listen for the video to start playing, then start sending frames
+        video.addEventListener('play', function() {
+            var $this = this; // The video element
+            var fps = 10; // Frames per second
+
+            setInterval(function() {
+                var canvas = document.createElement('canvas');
+                canvas.width = $this.clientWidth;
+                canvas.height = $this.clientHeight;
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage($this, 0, 0, canvas.width, canvas.height);
+
+                // Convert the canvas to a data URL
+                var dataURL = canvas.toDataURL('image/jpeg');
+                var base64ImageContent = dataURL.replace(/^data:image\/(jpeg|png);base64,/, "");
+
+                // Send the image data to the server
+                socket.emit('image', base64ImageContent);
+            }, 1000 / fps);
+        });
+
+        // Handle messages from the server
+        socket.on('image_response', function(data) {
+            console.log('Response from server:', data);
+
+            document.getElementById('outputImage').src = 'data:image/jpeg;base64,' + data.image;
+            // You can update the DOM or take other actions based on the server's response here.
+        });
+    </script>
+</body>
+</html>
