@@ -3,7 +3,7 @@ FROM python:3.9
 ENV VIRTUAL_ENV /env
 ENV PATH /env/bin:$PATH
 
-#Installing all python modules specified
+# Installing all python modules specified
 ADD requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
