@@ -1,19 +1,25 @@
+# Use an official Python runtime as a parent image
 FROM python:3.9
 
+# Set environment variables
 ENV VIRTUAL_ENV /env
 ENV PATH /env/bin:$PATH
 
-# Installing all python modules specified
-RUN pip install --no-cache-dir --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt
-
-#Copy App Contents
-ADD . /app
+# Set the working directory in the container
 WORKDIR /app
 
-CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 app:app
+# Copy the current directory contents into the container at /app
+ADD . /app
 
-#Start Flask Server
-CMD ["python", "app.py"]
-#Expose server port
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Make port 8080 available to the world outside this container
 EXPOSE 8080
+
+# Define environment variable
+ENV PORT 8080
+
+# Run app.py when the container launches
+CMD gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 app:app
