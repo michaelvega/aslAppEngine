@@ -34,14 +34,16 @@ bower_components/
 dist/
 build/
 
-# Ignore all markdown, text, and documentation files
-*.md
-*.txt
-*.docx
-README
-LICENSE
-
-# Ignore test directories and files
-tests/
-*.test.py
-test_*.py
+# Optional: Ignore all files except those explicitly specified
+# Uncomment the line below if you want to use this mode.
+# Important: This may cause unexpected behavior if not handled properly!
+!app.yaml
+!app.py
+!requirements.txt
+!lib/
+!.dockerignore
+!templates/
+!.gcloudignore
+!Dockerfile
+!Procfile.txt
+!requirements.txt
