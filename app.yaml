@@ -1,4 +1,4 @@
-runtime: python39 # or custom for app deploy, not run deploy
+runtime: custom # or custom for app deploy, not run deploy which is python39
 env: flex
 entrypoint: gunicorn -b :$PORT app:app
 

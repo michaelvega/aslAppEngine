@@ -11,6 +11,7 @@ WORKDIR /app
 # Copy the current directory contents into the container at /app
 ADD . /app
 
+RUN apt-get update && apt-get install -y libgl1-mesa-glx
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
@@ -22,4 +23,4 @@ EXPOSE 8080
 ENV PORT 8080
 
 # Run app.py when the container launches
-CMD gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 app:app
+CMD gunicorn --bind :$PORT --workers 1 --worker-class eventlet --threads 8 --timeout 120 app:app
