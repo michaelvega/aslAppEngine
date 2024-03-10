@@ -11,7 +11,7 @@ resources:
   disk_size_gb: 10  # Adjust the disk size as needed
 
 runtime_config:  # Specify the python version
-  python_version: 3.9
+  operating_system: ubuntu22
 
 env_variables:
   # Environment variables can be placed here, if needed.
