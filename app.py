@@ -2,6 +2,7 @@ import math
 import time
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO, emit
+from flask_cors import CORS
 import cv2
 import numpy as np
 import base64
@@ -14,6 +15,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__, template_folder='templates')
+CORS(app)  # Apply CORS to all routes and for all domains
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Initialize Hand Detector
@@ -77,7 +79,7 @@ def set_target_letter():
     else:
         return jsonify({'message': 'Invalid input'}), 200
 
-@app.route('/get_target_letter', methods=['GET'])
+@app.route('/get_predicted_letter', methods=['GET'])
 def get_predicted_letter():
     global predicted_letter
     return jsonify({'predicted_letter': predicted_letter}), 200
