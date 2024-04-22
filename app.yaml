@@ -8,10 +8,7 @@ entrypoint: gunicorn -w 4 -b :$PORT app:app  # Number of workers set to 4
 automatic_scaling:
   min_num_instances: 1
   max_num_instances: 4  # Allows scaling up to 4 instances based on demand
-  target_cpu_utilization: 0.6
   cool_down_period_sec: 60
-  cpu_utilization:
-    target_utilization: 0.6
 
 resources:
   cpu: 4  # Increased from 2 to 4
