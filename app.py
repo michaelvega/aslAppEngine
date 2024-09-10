@@ -15,8 +15,8 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__, template_folder='templates')
-CORS(app)  # Apply CORS to all routes and for all domains
-socketio = SocketIO(app, cors_allowed_origins="*")
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})  # Apply CORS to all routes and for all domains
+# socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Initialize Hand Detector
 detector = HandDetector(maxHands=1, detectionCon=0.7)  # Adjusted for potentially faster detection
@@ -29,11 +29,13 @@ labels = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", 
 
 offset = 20
 imgSize = 200  # Reduced size for faster processing
-target_letter = 'a'  # Default target letter
+target_letter = "None"  # Default target letter
 predicted_letter = "None"
 
 
-def process_frame(img, target_letter):
+def process_frame(img):
+    if target_letter == 'None':
+        raise "No target letter sent"
     imgOutput = img.copy()
     hands, img = detector.findHands(img)
     prediction = None
@@ -66,7 +68,17 @@ def process_frame(img, target_letter):
         logging.info("No hand detected in the frame.")
 
     _, jpeg = cv2.imencode('.jpg', imgOutput, [int(cv2.IMWRITE_JPEG_QUALITY), 50])  # Increased compression
-    return jpeg.tobytes(), prediction, index
+    logging.info(f"Prediction: {prediction}, Index: {index}")
+    # return jpeg.tobytes(), prediction, index
+
+    encoded_jpeg = base64.b64encode(jpeg.tobytes()).decode('utf-8')
+
+    #originally i also returned predictions
+    return ({
+        "status": "success",
+        "image": encoded_jpeg,  # Base64-encoded JPEG image
+        "index": int(index)
+    })
 
 
 @app.route('/set_target_letter', methods=['POST'])
@@ -79,11 +91,14 @@ def set_target_letter():
     else:
         return jsonify({'message': 'Invalid input'}), 200
 
+
 @app.route('/get_predicted_letter', methods=['GET'])
 def get_predicted_letter():
     global predicted_letter
     return jsonify({'predicted_letter': predicted_letter}), 200
 
+
+"""
 @socketio.on('image')
 def handle_image(data):
     try:
@@ -105,6 +120,35 @@ def handle_image(data):
     except Exception as e:
         logging.error(f"Error processing image: {str(e)}")
         emit('error', {'message': 'Error processing image'})
+"""
+
+
+@app.route('/upload', methods=['POST'])
+def upload_image():
+    print("hi")
+    data = request.json['image']
+    # Remove the base64 header (data:image/png;base64,)
+    image_data = data.split(",")[1]
+
+    # Decode the base64 image
+
+    sbuf = io.BytesIO()
+    sbuf.write(base64.b64decode(image_data))
+    pimg = Image.open(sbuf)
+    frame = cv2.cvtColor(np.array(pimg), cv2.COLOR_RGB2BGR)
+    print(frame)
+
+    # decoded_image = base64.b64decode(image_data)
+    # np_image = np.frombuffer(decoded_image, np.uint8)
+
+    # Convert the image to OpenCV format
+    # img = cv2.imdecode(frame, cv2.IMREAD_COLOR)
+    # rint(img)
+
+    # Now you can call your hand detection function
+    res = process_frame(frame)
+
+    return jsonify(res)
 
 
 @app.route('/')
@@ -113,4 +157,4 @@ def index():
 
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, allow_unsafe_werkzeug=True)
+    app.run(debug=True)
